@@ -25,4 +25,15 @@ You can also start a build manually using **Actions â†’ Build ScratchFade APK â†
 - Fails if the APK wasn't produced, instead of publishing a misleading empty artifact.
 - Uploads the debug APK as a downloadable workflow artifact.
 
-The workflow builds an unsigned-for-Play-Store **debug APK** for direct testing. It does not publish a Play Store release or create a release-signed APK. The build must run on GitHub after these files are pushed; this offline workspace cannot execute GitHub Actions or download Android SDK packages, so the APK has not been compiled here.
+The workflow builds an unsigned-for-Play-Store **debug APK** for direct testing. It does not publish a Play Store release or create a release-signed APK. The workflow itself must run on GitHub after these files are pushed.
+
+## Local command-line build
+
+The project now includes a Gradle wrapper, so you only need a JDK 17 and the Android SDK (platform 35 and build-tools 35.0.0):
+
+```sh
+cd ScratchFade
+ANDROID_HOME=/path/to/android-sdk ./gradlew assembleDebug
+```
+
+The APK is written to `ScratchFade/app/build/outputs/apk/debug/app-debug.apk`.

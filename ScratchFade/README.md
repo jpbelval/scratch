@@ -4,7 +4,15 @@ A small open-source Android app project: choose a photo from your device, scratc
 
 ## Build the APK
 
-This workspace does not include the Android SDK or Gradle, so an APK could not be compiled here. To build it:
+### From the command line
+
+1. Install a JDK 17 and the Android SDK (platform 35 and build-tools 35.0.0).
+2. Point the build at the SDK, either with `ANDROID_HOME` or by creating
+   `local.properties` with `sdk.dir=/path/to/android-sdk`.
+3. Run `./gradlew assembleDebug` from this directory.
+4. The APK is written to `app/build/outputs/apk/debug/app-debug.apk`.
+
+### With Android Studio
 
 1. Install Android Studio on a computer.
 2. Open this `ScratchFade` folder in Android Studio.
@@ -17,9 +25,12 @@ The project uses Kotlin and Android's built-in photo picker/document chooser. Ph
 ## Behavior
 
 - Select a photo using **Choose a photo**.
-- Scratch with your finger.
-- After enough of the cover is scratched, wait briefly; the photo fades out and the cover resets.
+- Once a photo is loaded, the picker button is hidden so the trick can be performed without it on screen.
+- Scratch with your finger to reveal the photo.
+- After enough of the cover is scratched, wait briefly; the photo fades out and the cover resets with the same photo.
 - **Reset scratch card** resets it immediately.
+- To choose a different photo while the picker is hidden, long-press the **ScratchFade** title.
+- The selected photo is kept when the device rotates.
 
 License: MIT (see `LICENSE`).
 

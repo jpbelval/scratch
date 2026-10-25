@@ -1,0 +1,17 @@
+# Gradle / Android build outputs
+.gradle/
+build/
+ScratchFade/.gradle/
+ScratchFade/build/
+ScratchFade/app/build/
+ScratchFade/local.properties
+local.properties
+
+# IDE files
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# OS files
+.DS_Store
