@@ -1,6 +1,6 @@
 # Magic Wipe (Android)
 
-A phone-sized re-creation of **Simon Pierro's Magic Wipe** illusion. Choose the image your audience sees, choose the message the wipe reveals, hand the phone over and let them wipe the screen with a finger. The screen is cleared with soft wooden-heart strokes; once enough of it is gone, the rest fades away and the hidden message takes over.
+A phone-sized re-creation of **Simon Pierro's Magic Wipe** illusion. Choose the image your audience sees, choose the message the wipe reveals, hand the phone over and let them wipe the screen with a finger. The screen is cleared with soft dot-shaped strokes; once enough of it is gone, the rest fades away and the hidden message takes over.
 
 The Android module and package still use the original `ScratchFade` name, but the installed app is **Magic Wipe**.
 
@@ -9,7 +9,7 @@ The Android module and package still use the original `ScratchFade` name, but th
 - **Set Screen.** picks the image shown first — a photo, a lock screen, a picture of the magician, anything.
 - **Set Message.** picks the reveal — a note, a photo, or the built-in wooden heart and *I love you.* artwork.
 - **START** hides the setup screen, goes edge-to-edge and keeps the display awake.
-- Wipe with a finger. Each stroke erases a soft heart shape; when about a third of the screen has been cleared, the rest fades away automatically.
+- Wipe with a finger. Each stroke erases soft dots; when about a third of the screen has been cleared, the rest fades away automatically.
 - Once the message is showing, **tap** to set the trick up again, or **long-press the message** (or press Back) to return to the setup screen.
 - **INFO** explains the routine and offers **Reset images**.
 - Both cards are copied into app-private storage, so the setup survives restarts. Everything is processed locally: no network permission, no uploads, no storage permission.

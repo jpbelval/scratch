@@ -9,7 +9,6 @@ import android.graphics.BlurMaskFilter
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.Path
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
 import android.graphics.Rect
@@ -30,9 +29,9 @@ import kotlin.math.max
  * Full-screen performance surface.
  *
  * The chosen "screen" image is painted onto a scratch layer. Dragging a finger
- * clears overlapping wooden hearts from that layer, revealing the "message"
- * underneath. Once enough of the card is wiped the remaining screen fades away,
- * then a tap resets the trick and a long-press returns to the setup screen.
+ * clears overlapping dots from that layer, revealing the "message" underneath.
+ * Once enough of the card is wiped the remaining screen fades away, then a tap
+ * resets the trick and a long-press returns to the setup screen.
  */
 class MagicWipeView @JvmOverloads constructor(
     context: Context,
@@ -54,8 +53,6 @@ class MagicWipeView @JvmOverloads constructor(
     private var revealing = false
     private var revealed = false
     private var touching = false
-    private var padAlpha = 0f
-    private var hintAlpha = 255f
 
     private var lastX = 0f
     private var lastY = 0f
@@ -65,18 +62,14 @@ class MagicWipeView @JvmOverloads constructor(
     private val gestureRects = listOf(gestureRect)
 
     private val density = resources.displayMetrics.density
-    private val brushSize = 64f * density
-    private val stampStep = brushSize * 0.42f
-    private val heartPath = MagicArt.heartPath(0f, 0f, brushSize)
-    private val heartEdgePath = MagicArt.heartPath(0f, 0f, brushSize * 1.10f)
-    private val padBitmap = MagicArt.wipePad(context, (66f * density).toInt())
+    private val brushRadius = 32f * density
+    private val stampStep = brushRadius * 0.84f
 
     private val tmpRect = RectF()
 
     private val screenPaint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
     private val messagePaint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
     private val fillPaint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
-    private val padPaint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
 
     private val clearPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
@@ -89,29 +82,7 @@ class MagicWipeView @JvmOverloads constructor(
         maskFilter = BlurMaskFilter(4f * density, BlurMaskFilter.Blur.NORMAL)
     }
 
-    private val hintTextPaint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.SUBPIXEL_TEXT_FLAG).apply {
-        color = Color.WHITE
-        textSize = 11f * density
-        textAlign = Paint.Align.CENTER
-        typeface = android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL)
-        letterSpacing = 0.18f
-        setShadowLayer(3f * density, 0f, 1f * density, Color.argb(200, 0, 0, 0))
-    }
-    private val hintLabel = context.getString(R.string.wipe_to_reveal)
-    private val hintBgPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.BLACK
-    }
-    private val hintBorderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.WHITE
-        style = Paint.Style.STROKE
-        strokeWidth = 1f * density
-    }
-
     private var revealAnimator: ValueAnimator? = null
-    private var padAnimator: ValueAnimator? = null
-    private var hintAnimator: ValueAnimator? = null
-
-    private val hintFadeRunnable = Runnable { fadeHint(420L) }
 
     private val gestures = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
         override fun onDown(e: MotionEvent): Boolean = true
@@ -148,14 +119,8 @@ class MagicWipeView @JvmOverloads constructor(
     fun stopPerformance() {
         revealAnimator?.cancel()
         revealAnimator = null
-        padAnimator?.cancel()
-        padAnimator = null
-        hintAnimator?.cancel()
-        hintAnimator = null
-        removeCallbacks(hintFadeRunnable)
         touching = false
         revealing = false
-        padAlpha = 0f
         invalidate()
     }
 
@@ -163,11 +128,6 @@ class MagicWipeView @JvmOverloads constructor(
         if (width <= 0 || height <= 0) return
         revealAnimator?.cancel()
         revealAnimator = null
-        padAnimator?.cancel()
-        padAnimator = null
-        hintAnimator?.cancel()
-        hintAnimator = null
-        removeCallbacks(hintFadeRunnable)
 
         if (layer == null || layer!!.width != width || layer!!.height != height) {
             createLayer()
@@ -180,12 +140,8 @@ class MagicWipeView @JvmOverloads constructor(
         revealing = false
         revealed = false
         touching = false
-        padAlpha = 0f
-        hintAlpha = 255f
         lastProgressCheck = 0L
         invalidate()
-
-        if (hasCard) postDelayed(hintFadeRunnable, 3200L)
     }
 
     private fun createLayer() {
@@ -228,13 +184,6 @@ class MagicWipeView @JvmOverloads constructor(
             screenPaint.alpha = layerAlpha.coerceIn(0, 255)
             canvas.drawBitmap(cardLayer, 0f, 0f, screenPaint)
         }
-
-        if (!revealed && !revealing && hintAlpha > 0.5f) {
-            drawHint(canvas)
-        }
-        if (padAlpha > 0.5f) {
-            drawPad(canvas)
-        }
     }
 
     private fun drawCenterCrop(canvas: Canvas, bitmap: Bitmap, paint: Paint) {
@@ -245,44 +194,6 @@ class MagicWipeView @JvmOverloads constructor(
         val top = (height - drawHeight) / 2f
         tmpRect.set(left, top, left + drawWidth, top + drawHeight)
         canvas.drawBitmap(bitmap, null, tmpRect, paint)
-    }
-
-    private fun drawHint(canvas: Canvas) {
-        val text = hintLabel
-        hintTextPaint.alpha = hintAlpha.toInt().coerceIn(0, 255)
-        hintBorderPaint.alpha = (hintAlpha * 0.22f).toInt().coerceIn(0, 255)
-        hintBgPaint.alpha = (hintAlpha * 0.38f).toInt().coerceIn(0, 255)
-
-        val textWidth = hintTextPaint.measureText(text)
-        val halfHeight = 15f * density
-        val centerY = height * 0.84f
-        val rect = RectF(
-            width / 2f - textWidth / 2f - 22f * density,
-            centerY - halfHeight,
-            width / 2f + textWidth / 2f + 22f * density,
-            centerY + halfHeight
-        )
-        canvas.drawRoundRect(rect, halfHeight, halfHeight, hintBgPaint)
-        canvas.drawRoundRect(rect, halfHeight, halfHeight, hintBorderPaint)
-
-        val metrics = hintTextPaint.fontMetrics
-        val baseline = centerY - (metrics.ascent + metrics.descent) / 2f
-        canvas.drawText(text, width / 2f, baseline, hintTextPaint)
-    }
-
-    private fun drawPad(canvas: Canvas) {
-        padPaint.alpha = padAlpha.toInt().coerceIn(0, 255)
-        val size = padBitmap.width
-        tmpRect.set(
-            lastX - size / 2f,
-            lastY - size / 2f,
-            lastX + size / 2f,
-            lastY + size / 2f
-        )
-        val save = canvas.save()
-        canvas.rotate(-8f, lastX, lastY)
-        canvas.drawBitmap(padBitmap, null, tmpRect, padPaint)
-        canvas.restoreToCount(save)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -302,9 +213,6 @@ class MagicWipeView @JvmOverloads constructor(
                 touching = true
                 lastX = x
                 lastY = y
-                padAnimator?.cancel()
-                padAlpha = 232f
-                hideHintNow()
                 stampAt(x, y)
                 checkProgress(force = true)
                 invalidate()
@@ -334,7 +242,6 @@ class MagicWipeView @JvmOverloads constructor(
                 if (touching) {
                     stampAt(x, y)
                     touching = false
-                    fadePad()
                     checkProgress(force = true)
                 }
                 performClick()
@@ -351,12 +258,8 @@ class MagicWipeView @JvmOverloads constructor(
 
     private fun stampAt(x: Float, y: Float) {
         val canvas = layerCanvas ?: return
-        canvas.save()
-        canvas.translate(x, y)
-        canvas.rotate(-8f)
-        canvas.drawPath(heartEdgePath, clearEdgePaint)
-        canvas.drawPath(heartPath, clearPaint)
-        canvas.restore()
+        canvas.drawCircle(x, y, brushRadius * 1.08f, clearEdgePaint)
+        canvas.drawCircle(x, y, brushRadius, clearPaint)
     }
 
     private fun checkProgress(force: Boolean = false) {
@@ -388,10 +291,6 @@ class MagicWipeView @JvmOverloads constructor(
         if (revealing || revealed) return
         revealing = true
         touching = false
-        fadePad()
-        removeCallbacks(hintFadeRunnable)
-        hintAnimator?.cancel()
-        hintAlpha = 0f
         invalidate()
 
         val animator = ValueAnimator.ofFloat(1f, 0f).apply {
@@ -429,50 +328,9 @@ class MagicWipeView @JvmOverloads constructor(
         animator.start()
     }
 
-    private fun hideHintNow() {
-        removeCallbacks(hintFadeRunnable)
-        hintAnimator?.cancel()
-        hintAnimator = null
-        hintAlpha = 0f
-        invalidate()
-    }
-
-    private fun fadeHint(duration: Long) {
-        if (hintAlpha <= 0f) return
-        hintAnimator?.cancel()
-        val animator = ValueAnimator.ofFloat(hintAlpha, 0f).apply {
-            this.duration = duration
-            addUpdateListener {
-                hintAlpha = it.animatedValue as Float
-                invalidate()
-            }
-        }
-        hintAnimator = animator
-        animator.start()
-    }
-
-    private fun fadePad() {
-        padAnimator?.cancel()
-        if (padAlpha <= 0f) return
-        val animator = ValueAnimator.ofFloat(padAlpha, 0f).apply {
-            duration = 260L
-            addUpdateListener {
-                padAlpha = it.animatedValue as Float
-                invalidate()
-            }
-        }
-        padAnimator = animator
-        animator.start()
-    }
-
     override fun onDetachedFromWindow() {
         revealAnimator?.cancel()
         revealAnimator = null
-        padAnimator?.cancel()
-        padAnimator = null
-        hintAnimator?.cancel()
-        hintAnimator = null
-        removeCallbacks(hintFadeRunnable)
         super.onDetachedFromWindow()
     }
 

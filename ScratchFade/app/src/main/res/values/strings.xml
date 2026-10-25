@@ -10,7 +10,6 @@
     <string name="setup_hint">Press START, then wipe the screen to reveal your message. Tap it to replay; long-press it to return here.</string>
     <string name="privacy">Your photos stay on this device. No network needed.</string>
     <string name="tap_to_replay">Message revealed. Tap to perform again. Long-press to return to setup.</string>
-    <string name="wipe_to_reveal">WIPE TO REVEAL</string>
     <string name="wipe_announcement">Wipe the screen with a finger to reveal the message.</string>
     <string name="performance_description">Screen image covering the hidden message. Wipe to reveal it.</string>
     <string name="hero_preview_description">Preview of the wipe revealing the message</string>

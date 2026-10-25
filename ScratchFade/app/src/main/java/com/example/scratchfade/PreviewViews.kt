@@ -4,13 +4,11 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.LinearGradient
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
 import android.graphics.RectF
-import android.graphics.Shader
 import android.util.AttributeSet
 import android.view.View
 import kotlin.math.max
@@ -18,7 +16,7 @@ import kotlin.math.min
 
 /**
  * The live poster on the setup screen. It shows the chosen screen image with a
- * heart-shaped wipe already taken out of it, revealing a slice of the message.
+ * trail of dots already wiped out of it, revealing a slice of the message.
  */
 class HeroPreviewView @JvmOverloads constructor(
     context: Context,
@@ -30,7 +28,6 @@ class HeroPreviewView @JvmOverloads constructor(
     private var composed: Bitmap? = null
 
     private val density = resources.displayMetrics.density
-    private val padBitmap = MagicArt.wipePad(context, (82f * density).toInt())
     private val tmpRect = RectF()
     private val clipPath = Path()
     private val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -38,16 +35,6 @@ class HeroPreviewView @JvmOverloads constructor(
         style = Paint.Style.STROKE
         strokeWidth = 1.5f * density
     }
-    private val captionPaint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.SUBPIXEL_TEXT_FLAG).apply {
-        color = Color.WHITE
-        textSize = 9.5f * density
-        typeface = android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL)
-        letterSpacing = 0.2f
-    }
-    private val captionBgPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.argb(150, 0, 0, 0)
-    }
-    private val captionLabel = context.getString(R.string.wipe_to_reveal)
 
     fun setContent(screenBitmap: Bitmap?, messageBitmap: Bitmap?) {
         screen = screenBitmap
@@ -76,8 +63,7 @@ class HeroPreviewView @JvmOverloads constructor(
             layerCanvas.drawColor(Color.BLACK)
             drawCenterCrop(layerCanvas, screenBitmap)
 
-            val brush = min(width, height) * 0.18f
-            val heart = MagicArt.heartPath(0f, 0f, brush)
+            val dotRadius = min(width, height) * 0.09f
             val clear = Paint(Paint.ANTI_ALIAS_FLAG).apply {
                 xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
                 style = Paint.Style.FILL
@@ -92,48 +78,12 @@ class HeroPreviewView @JvmOverloads constructor(
                 val t = i / 7f
                 val x = width * (0.14f + 0.62f * t)
                 val y = height * (0.80f - 0.46f * t)
-                layerCanvas.save()
-                layerCanvas.translate(x, y)
-                layerCanvas.rotate(-8f)
-                layerCanvas.drawPath(heart, clearEdge)
-                layerCanvas.drawPath(heart, clear)
-                layerCanvas.restore()
+                layerCanvas.drawCircle(x, y, dotRadius * 1.08f, clearEdge)
+                layerCanvas.drawCircle(x, y, dotRadius, clear)
             }
             canvas.drawBitmap(layer, 0f, 0f, null)
             layer.recycle()
         }
-
-        // The wooden pad from the act, resting on the wipe trail.
-        val padSize = min(width, height) * 0.30f
-        val padCx = width * 0.30f
-        val padCy = height * 0.68f
-        tmpRect.set(padCx - padSize / 2f, padCy - padSize / 2f, padCx + padSize / 2f, padCy + padSize / 2f)
-        canvas.save()
-        canvas.rotate(-9f, padCx, padCy)
-        canvas.drawBitmap(padBitmap, null, tmpRect, null)
-        canvas.restore()
-
-        // Bottom scrim and reminder of what the poster is showing.
-        val scrim = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            shader = LinearGradient(
-                0f, height * 0.72f, 0f, height.toFloat(),
-                intArrayOf(Color.TRANSPARENT, Color.argb(155, 0, 0, 0)),
-                null,
-                Shader.TileMode.CLAMP
-            )
-        }
-        canvas.drawRect(0f, height * 0.72f, width.toFloat(), height.toFloat(), scrim)
-
-        val caption = captionLabel
-        val textWidth = captionPaint.measureText(caption)
-        val halfHeight = 11f * density
-        val left = 12f * density
-        val bottom = height - 12f * density
-        val rect = RectF(left, bottom - halfHeight * 2f, left + textWidth + 20f * density, bottom)
-        canvas.drawRoundRect(rect, halfHeight, halfHeight, captionBgPaint)
-        val metrics = captionPaint.fontMetrics
-        val baseline = rect.centerY() - (metrics.ascent + metrics.descent) / 2f
-        canvas.drawText(caption, left + 10f * density, baseline, captionPaint)
 
         old?.recycle()
     }

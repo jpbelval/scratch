@@ -1,6 +1,6 @@
 # Magic Wipe for Android
 
-A phone-sized re-creation of **Simon Pierro's Magic Wipe**. Choose a "screen" image and a hidden "message", press **START**, hand the phone over, and the audience wipes the display with a finger to reveal the message under soft wooden-heart strokes.
+A phone-sized re-creation of **Simon Pierro's Magic Wipe**. Choose a "screen" image and a hidden "message", press **START**, hand the phone over, and the audience wipes the display with a finger to reveal the message under soft dot-shaped strokes.
 
 The Android Gradle project lives in `ScratchFade/`; the module and package keep that original name. GitHub Actions workflows live at the repository root in `.github/workflows/`.
 
@@ -10,7 +10,7 @@ See [`ScratchFade/README.md`](ScratchFade/README.md) for the full feature list a
 
 - Setup screen with a live preview of the wipe, **START**, **Set Screen.**, **Set Message.** and **INFO**.
 - Full-screen performance mode with immersive system bars and Keep Screen On.
-- Finger wiping erases heart-shaped strokes and reveals the chosen message.
+- Finger wiping erases dot-shaped strokes and reveals the chosen message.
 - Automatic fade to the full message after roughly a third of the screen is wiped.
 - Tap after the reveal to perform again; long-press (or Back) to return to setup.
 - Two chosen images are copied into app-private storage and survive restarts.

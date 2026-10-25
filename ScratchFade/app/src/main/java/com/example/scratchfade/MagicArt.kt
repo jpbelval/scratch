@@ -109,31 +109,6 @@ object MagicArt {
         return bitmap
     }
 
-    /**
-     * The little wooden heart tile that follows the finger during the performance.
-     */
-    fun wipePad(context: android.content.Context, sizePx: Int): Bitmap {
-        val size = sizePx.coerceAtLeast(32)
-        val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-        val inset = size * 0.075f
-        val rect = RectF(inset, inset, size - inset, size - inset)
-        drawWoodPanel(canvas, rect, size * 0.15f, seed = 7)
-        drawHeart(canvas, size / 2f, size * 0.485f, size * 0.56f)
-
-        // A soft diagonal glint across the wood.
-        val glint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            shader = LinearGradient(
-                rect.left, rect.top, rect.right, rect.bottom,
-                intArrayOf(0x00FFFFFF, 0x66FFF4D8.toInt(), 0x00FFFFFF),
-                floatArrayOf(0.15f, 0.42f, 0.8f),
-                Shader.TileMode.CLAMP
-            )
-        }
-        canvas.drawRoundRect(rect, size * 0.15f, size * 0.15f, glint)
-        return bitmap
-    }
-
     fun drawHeart(canvas: Canvas, cx: Float, cy: Float, width: Float) {
         val path = heartPath(cx, cy, width)
 
