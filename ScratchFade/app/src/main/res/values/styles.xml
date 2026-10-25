@@ -1,9 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppTheme" parent="android:style/Theme.Material.Light.NoActionBar">
+    <style name="AppTheme.Base" parent="android:style/Theme.Material.Light.NoActionBar">
         <item name="android:fontFamily">sans</item>
         <item name="android:colorAccent">#5B6EE1</item>
-        <item name="android:statusBarColor">#111827</item>
-        <item name="android:navigationBarColor">#111827</item>
+        <item name="android:windowBackground">@drawable/bg_setup</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:windowLightStatusBar">false</item>
     </style>
+
+    <style name="AppTheme" parent="AppTheme.Base" />
+
+    <style name="AppDialog.Base" parent="@android:style/Theme.Material.Dialog.Alert">
+        <item name="android:windowBackground">@drawable/bg_dialog</item>
+        <item name="android:colorAccent">@color/accent_blue</item>
+        <item name="android:fontFamily">sans</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <style name="AppDialog" parent="AppDialog.Base" />
 </resources>

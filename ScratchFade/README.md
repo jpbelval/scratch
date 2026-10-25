@@ -1,6 +1,29 @@
-# ScratchFade (Android)
+# Magic Wipe (Android)
 
-A small open-source Android app project: choose a photo from your device, scratch the silver layer to reveal it, then the photo fades out and the cover resets automatically.
+A phone-sized re-creation of **Simon Pierro's Magic Wipe** illusion. Choose the image your audience sees, choose the message the wipe reveals, hand the phone over and let them wipe the screen with a finger. The screen is cleared with soft wooden-heart strokes; once enough of it is gone, the rest fades away and the hidden message takes over.
+
+The Android module and package still use the original `ScratchFade` name, but the installed app is **Magic Wipe**.
+
+## The trick
+
+- **Set Screen.** picks the image shown first — a photo, a lock screen, a picture of the magician, anything.
+- **Set Message.** picks the reveal — a note, a photo, or the built-in wooden heart and *I love you.* artwork.
+- **START** hides the setup screen, goes edge-to-edge and keeps the display awake.
+- Wipe with a finger. Each stroke erases a soft heart shape; when about a third of the screen has been cleared, the rest fades away automatically.
+- Once the message is showing, **tap** to set the trick up again, or **long-press the message** (or press Back) to return to the setup screen.
+- **INFO** explains the routine and offers **Reset images**.
+- Both cards are copied into app-private storage, so the setup survives restarts. Everything is processed locally: no network permission, no uploads, no storage permission.
+
+The app ships with procedurally drawn defaults: a bright beach "screen" and the wooden-heart *I love you.* message. There are no bundled photographs, so the trick works immediately on a fresh install.
+
+## Run the checks
+
+```sh
+./gradlew testDebugUnitTest lintDebug
+```
+
+The Robolectric tests drive the setup → performance → wipe → replay flow and exercise
+card persistence. `lintDebug` should finish with zero errors.
 
 ## Build the APK
 
@@ -20,20 +43,16 @@ A small open-source Android app project: choose a photo from your device, scratc
 4. Select **Build > Build Bundle(s) / APK(s) > Build APK(s)**.
 5. Android Studio will show the location of `app-debug.apk`.
 
-The project uses Kotlin and Android's built-in photo picker/document chooser. Photos are processed locally; the app has no network permission and does not upload them.
-
-## Behavior
-
-- Select a photo using **Choose a photo**.
-- Once a photo is loaded, the picker button is hidden so the trick can be performed without it on screen.
-- Scratch with your finger to reveal the photo.
-- After enough of the cover is scratched, wait briefly; the photo fades out and the cover resets with the same photo.
-- **Reset scratch card** resets it immediately.
-- To choose a different photo while the picker is hidden, long-press the **ScratchFade** title.
-- The selected photo is kept when the device rotates.
-
-License: MIT (see `LICENSE`).
-
 ## Build in GitHub Actions (without installing Android Studio locally)
 
-The repository includes `.github/workflows/build-apk.yml`. Upload/push this project to a GitHub repository, then open **Actions → Build Android APK → Run workflow**. When it finishes, download the `ScratchFade-debug-apk` artifact. This produces a debug APK, not a Play Store release-signed APK.
+The repository includes `.github/workflows/build-apk.yml`. Push the project to GitHub, then open **Actions → Build Magic Wipe APK → Run workflow**. When it finishes, download the `MagicWipe-debug-apk` artifact. This produces a debug APK, not a Play Store release-signed APK.
+
+## Notes for performing
+
+- Use a screen image that the audience has not already seen up close; the reveal is more surprising.
+- Wipe with broad, overlapping strokes. The auto-reveal needs roughly a third of the screen cleared.
+- Choose a message image with a dark or simple edge: it fills the screen with a centre crop, just like the screen image.
+- Lock the phone to portrait (the app already does) and turn on Do Not Disturb before handing it over. Keep Screen On is enabled automatically during the trick.
+- Tap once after the reveal to reset instantly. Long-press to exit the performance.
+
+License: MIT (see `LICENSE`).

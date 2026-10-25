@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Magic Wipe</string>
+    <string name="title">Simon Pierro\'s Magic Wipe!</string>
+    <string name="info">INFO</string>
+    <string name="tagline">Set the screen. Set the message. Hand over the magic.</string>
+    <string name="start">START</string>
+    <string name="set_screen">Set Screen.</string>
+    <string name="set_message">Set Message.</string>
+    <string name="setup_hint">Press START, then wipe the screen to reveal your message. Tap it to replay; long-press it to return here.</string>
+    <string name="privacy">Your photos stay on this device. No network needed.</string>
+    <string name="tap_to_replay">Message revealed. Tap to perform again. Long-press to return to setup.</string>
+    <string name="wipe_to_reveal">WIPE TO REVEAL</string>
+    <string name="wipe_announcement">Wipe the screen with a finger to reveal the message.</string>
+    <string name="performance_description">Screen image covering the hidden message. Wipe to reveal it.</string>
+    <string name="hero_preview_description">Preview of the wipe revealing the message</string>
+    <string name="screen_preview_description">Current screen image</string>
+    <string name="message_preview_description">Current message image</string>
+    <string name="screen_updated">Screen image set</string>
+    <string name="message_updated">Message image set</string>
+    <string name="image_error">Couldn\'t load that image</string>
+    <string name="image_unsaved">Image is ready, but it couldn\'t be saved for next time.</string>
+    <string name="no_picker">No image picker is available on this device</string>
+    <string name="loading">Images are still loading…</string>
+    <string name="defaults_restored">Default images restored</string>
+    <string name="how_title">How the magic works</string>
+    <string name="how_body">1. Set Screen — the photo, lock screen or picture your audience sees first.\n\n2. Set Message — the picture or note the wipe reveals.\n\n3. Press START and hand the phone over. Ask them to wipe the screen with a finger.\n\nOnce the message appears, tap the screen to perform again. Long-press the message — or press Back — to return to this menu.\n\nEverything is processed on this device and nothing is uploaded.</string>
+    <string name="got_it">Got it</string>
+    <string name="reset_images">Reset images</string>
+</resources>

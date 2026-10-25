@@ -1,27 +1,37 @@
-# ScratchFade: GitHub Actions APK build fix
+# Magic Wipe for Android
 
-This patch matches the layout of `https://github.com/jpbelval/scratch`: the Android Gradle project lives in `ScratchFade/`, while GitHub Actions workflows live at the repository root in `.github/workflows/`.
+A phone-sized re-creation of **Simon Pierro's Magic Wipe**. Choose a "screen" image and a hidden "message", press **START**, hand the phone over, and the audience wipes the display with a finger to reveal the message under soft wooden-heart strokes.
 
-## Apply this patch
+The Android Gradle project lives in `ScratchFade/`; the module and package keep that original name. GitHub Actions workflows live at the repository root in `.github/workflows/`.
 
-Extract this ZIP into the root of your existing `jpbelval/scratch` checkout and allow the files to merge/overwrite. It adds/replaces `.github/workflows/build-apk.yml` and includes the Android project under `ScratchFade/`.
+See [`ScratchFade/README.md`](ScratchFade/README.md) for the full feature list and performing tips.
 
-If your repository already contains the same `ScratchFade/` source, the only required change is `.github/workflows/build-apk.yml`.
+## Features
+
+- Setup screen with a live preview of the wipe, **START**, **Set Screen.**, **Set Message.** and **INFO**.
+- Full-screen performance mode with immersive system bars and Keep Screen On.
+- Finger wiping erases heart-shaped strokes and reveals the chosen message.
+- Automatic fade to the full message after roughly a third of the screen is wiped.
+- Tap after the reveal to perform again; long-press (or Back) to return to setup.
+- Two chosen images are copied into app-private storage and survive restarts.
+- Procedurally drawn default beach screen and wooden-heart *I love you.* message.
+- No network permission, no storage permission, and no uploads.
 
 ## Build the APK on GitHub
 
 1. Commit and push the changes to `main` (or `master`). A build also starts for pull requests targeting those branches.
-2. In GitHub, open the repository's **Actions** tab and select **Build ScratchFade APK**.
-3. Open the completed run and download the **ScratchFade-debug-apk** artifact.
+2. In GitHub, open the repository's **Actions** tab and select **Build Magic Wipe APK**.
+3. Open the completed run and download the **MagicWipe-debug-apk** artifact.
 4. Extract the artifact ZIP; it contains `app-debug.apk`. Transfer that APK to your Android phone and install it. If Android blocks the installation, allow your browser/file manager to install unknown apps for this one install.
 
-You can also start a build manually using **Actions → Build ScratchFade APK → Run workflow**.
+You can also start a build manually using **Actions → Build Magic Wipe APK → Run workflow**.
 
-## What this workflow fixes
+## What the workflow does
 
-- Builds from the actual `ScratchFade/` subdirectory (rather than the repository root).
+- Builds from the actual `ScratchFade/` subdirectory.
 - Sets up Java 17, Gradle 8.9, and the Android SDK on the hosted runner.
 - Installs Android platform 35 and build-tools 35.0.0.
+- Runs the Robolectric unit tests and `lintDebug`.
 - Fails if the APK wasn't produced, instead of publishing a misleading empty artifact.
 - Uploads the debug APK as a downloadable workflow artifact.
 
@@ -29,7 +39,7 @@ The workflow builds an unsigned-for-Play-Store **debug APK** for direct testing.
 
 ## Local command-line build
 
-The project now includes a Gradle wrapper, so you only need a JDK 17 and the Android SDK (platform 35 and build-tools 35.0.0):
+The project includes a Gradle wrapper, so you only need JDK 17 and the Android SDK (platform 35 and build-tools 35.0.0):
 
 ```sh
 cd ScratchFade
