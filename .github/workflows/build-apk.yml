@@ -39,7 +39,7 @@ jobs:
           gradle-version: '8.9'
 
       - name: Install Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
 
       - name: Install required Android SDK packages
         run: sdkmanager --install 'platforms;android-35' 'build-tools;35.0.0'
